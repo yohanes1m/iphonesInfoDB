@@ -1,6 +1,7 @@
 const mysql = require("mysql");
 const express = require("express");
 var cors = require("cors");
+require("dotenv").config();
 
 const body_parser = require("body-parser");
 
@@ -12,10 +13,10 @@ app.use(body_parser.urlencoded({ extended: true }));
 
 var mysqlConnection = mysql.createConnection({
   // socketPath: "/Applications/MAMP/tmp/mysql/mysql.sock", //path to mysql sock in MAMP
-  user: "yohaniiq_iphoneinfo",
-  password: "1iphoneinfo",
-  host: "91.204.209.39",
-  database: "yohaniiq_iphoneinfo",
+  user: process.env.USER,
+  password: process.env.PASSWORD,
+  host: process.env.HOST,
+  database: process.env.DATABASE,
 });
 
 mysqlConnection.connect((err) => {
@@ -71,8 +72,6 @@ app.get("/install", (req, res) => {
   res.end(message);
 });
 
-
-
 // Insert a new iPhone
 app.post("/add-product", (req, res) => {
   // products table
@@ -103,11 +102,9 @@ app.post("/add-product", (req, res) => {
       console.log(err);
       res.end(err);
     } else {
-
       let insert_product_des = `INSERT INTO ProductDescription(product_id,product_brief_description,product_description,product_img,product_link) VALUES (${PId},"${product_brief_description}","${product_description}","${product_img}","${product_link}")`;
 
       let insert_Product_price = `INSERT INTO ProductPrice(product_id,starting_price,price_range) VALUES ("${PId}","${starting_price}", "${price_range}") ;`;
-
 
       mysqlConnection.query(insert_product_des, (err) => {
         if (err) {
@@ -122,13 +119,10 @@ app.post("/add-product", (req, res) => {
           res.end(err);
         }
       });
-
     }
     res.send("data inserted");
   });
-
 });
-
 
 //Get all iphone's
 app.get("/iphones", (req, res) => {
@@ -146,9 +140,8 @@ app.get("/iphones", (req, res) => {
 
 app.listen(3001, (err) => {
   if (err) {
-    console.log(err)
-  }
-  else {
-    console.log("Listening to : 3001")
+    console.log(err);
+  } else {
+    console.log("Listening to : 3001");
   }
 });
